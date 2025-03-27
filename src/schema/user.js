@@ -4,15 +4,26 @@ import mongoose from 'mongoose';
 const userSchema = new mongoose.Schema(
   {
    
+    // email: {
+    //     type: String,
+    //     unique: true, //  Unique constraint applied correctly
+    //     required: [true, 'Email is required'],
+    //     match: [
+    //       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+    //       'Please fill a valid email address'
+    //     ]
+    //   },
+
     email: {
-        type: String,
-        unique: true, // ✅ Fix: Unique constraint applied correctly
-        required: [true, 'Email is required'],
-        match: [
-          /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-          'Please fill a valid email address'
-        ]
-      },
+      type: String,
+      unique: true, // Unique constraint applied correctly
+      required: [true, 'Email is required'],
+      match: [
+        /^[\w.-]+@[\w.-]+\.[a-zA-Z]{2,3}$/, 
+        'Please fill a valid email address'
+      ]
+    },
+    
       
     password: {
       type: String,

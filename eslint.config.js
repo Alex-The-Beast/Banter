@@ -18,6 +18,7 @@ export default defineConfig([
       "simple-import-sort/imports": "error",
       "simple-import-sort/exports": "error"
     },
+  
   },
   
   {
@@ -25,5 +26,6 @@ export default defineConfig([
     plugins: { js },
     extends: ['js/recommended']
   },
+  
   pluginReact.configs.flat.recommended
 ]);
