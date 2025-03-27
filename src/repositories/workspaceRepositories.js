@@ -1,9 +1,11 @@
 import { StatusCodes } from 'http-status-codes';
 
+// import Channel from '../schema/channel.js';
+import User from '../schema/user.js';
 import WorkSpace from '../schema/workSpace.js';
 import ClientError from '../utils/errors/clientError.js';
+import channelRepository from './channelRepositories.js';
 import crudRepository from './crudRepositories.js';
-import User from '../schema/user.js';
 
 // we can make this by creating an object as well
 const workspaceRepository = {
@@ -52,35 +54,73 @@ const workspaceRepository = {
       });
     }
 
-    const isMemberAlreadyPartOfWorkspace = WorkSpace.members.find(
-      (member) => member.memberId === memberId
+    const isMemberAlreadyPartOfWorkspace = workspace.members.find(
+      (member) => member.memberId == memberId
     );
-    if (!isMemberAlreadyPartOfWorkspace) {
+    if (isMemberAlreadyPartOfWorkspace) {
       throw new ClientError({
         explanation: 'Invalid Data sent from the client.',
-        message: 'user already exists.',
+        message: 'user already exists in workspace.',
         statusCode: StatusCodes.FORBIDDEN
       });
     }
 
-    WorkSpace.members.push({
+    workspace.members.push({
       memberId,
       role
     });
-    await WorkSpace.Save();
+    await workspace.save();
 
     return workspace;
 
     // const updatedWorkspace = await WorkSpace.findByIdAndUpdate(
     //   workspaceId,
     //   {
-    //     $addToSet: { mambers: memberId,role }
+    //     $addToSet: { members: {memberId,role} }
     //   },
     //   { new: true }
     // );
   },
-  addChannelToWorkspace: async function () {},
-  fetchAllWorkspaceByMemberId: async function () {}
+  addChannelToWorkspace: async function (workspaceId, channelName) {
+    const workspace =
+      await WorkSpace.findById(workspaceId).populate('channels');
+    if (!workspace) {
+      return ClientError({
+        explanation: 'Invalid data sent from the client.',
+        message: 'Workspace not found.',
+        statusCode: StatusCodes.NOT_FOUND
+      });
+    }
+
+    const isChannelExistInWorkspace = workspace.channels.find(
+      (channel) => channel.name === channelName
+    );
+    if (isChannelExistInWorkspace) {
+      return ClientError({
+        explanation: 'Invalid data sent from the client.',
+        message: 'Channel already exist in workspace.',
+        statusCode: StatusCodes.FORBIDDEN
+      });
+    }
+
+    // now we have to create a channel repository that will create channel first then we push in workspace
+
+    const channel = await channelRepository.create({ name: channelName });
+    workspace.channels.push({
+      channel
+    });
+    await workspace.save();
+
+    return workspace;
+  },
+
+  fetchAllWorkspaceByMemberId: async function (memberId) {
+    const workspaces=await WorkSpace.find({
+        'members.memberId':memberId
+    }).populate('members.memberId','username email  avatar')
+
+    return workspaces
+  }
 };
 
 export default workspaceRepository;
