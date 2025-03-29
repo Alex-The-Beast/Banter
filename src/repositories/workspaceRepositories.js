@@ -1,6 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
 
-// import Channel from '../schema/channel.js';
 import User from '../schema/user.js';
 import WorkSpace from '../schema/workSpace.js';
 import ClientError from '../utils/errors/clientError.js';
@@ -81,45 +80,85 @@ const workspaceRepository = {
     //   { new: true }
     // );
   },
+  // addChannelToWorkspace: async function (workspaceId, channelName) {
+  //   const workspace =
+  //     await WorkSpace.findById(workspaceId).populate('channels');
+  //   if (!workspace) {
+  //     return ClientError({
+  //       explanation: 'Invalid data sent from the client.',
+  //       message: 'Workspace not found.',
+  //       statusCode: StatusCodes.NOT_FOUND
+  //     });
+  //   }
+
+  //   const isChannelExistInWorkspace = workspace.channels.find(
+  //     (channel) => channel.name === channelName
+  //   );
+  //   if (isChannelExistInWorkspace) {
+  //     return ClientError({
+  //       explanation: 'Invalid data sent from the client.',
+  //       message: 'Channel already exist in workspace.',
+  //       statusCode: StatusCodes.FORBIDDEN
+  //     });
+  //   }
+
+  //   // now we have to create a channel repository that will create channel first then we push in workspace
+
+  //   const channel = await channelRepository.create({ name: channelName });
+  //   workspace.channels.push({
+  //     channel
+  //   });
+  //   await workspace.save();
+
+  //   return workspace;
+  // },
+
+
   addChannelToWorkspace: async function (workspaceId, channelName) {
     const workspace =
       await WorkSpace.findById(workspaceId).populate('channels');
+      
+
     if (!workspace) {
-      return ClientError({
-        explanation: 'Invalid data sent from the client.',
-        message: 'Workspace not found.',
+      throw new ClientError({
+        explanation: 'Invalid data sent from the client',
+        message: 'Workspace not found',
         statusCode: StatusCodes.NOT_FOUND
       });
     }
 
-    const isChannelExistInWorkspace = workspace.channels.find(
+    const isChannelAlreadyPartOfWorkspace = workspace.channels.find(
       (channel) => channel.name === channelName
     );
-    if (isChannelExistInWorkspace) {
-      return ClientError({
-        explanation: 'Invalid data sent from the client.',
-        message: 'Channel already exist in workspace.',
+
+    if (isChannelAlreadyPartOfWorkspace) {
+      throw new ClientError({
+        explanation: 'Invalid data sent from client',
+        message: 'Channel already part of workspace',
         statusCode: StatusCodes.FORBIDDEN
       });
     }
 
-    // now we have to create a channel repository that will create channel first then we push in workspace
-
-    const channel = await channelRepository.create({ name: channelName });
-    workspace.channels.push({
-      channel
+    const channel = await channelRepository.create({
+      name: channelName,
+      workspaceId: workspaceId
     });
+
+    workspace.channels.push(channel);
     await workspace.save();
 
     return workspace;
   },
 
-  fetchAllWorkspaceByMemberId: async function (memberId) {
-    const workspaces=await WorkSpace.find({
-        'members.memberId':memberId
-    }).populate('members.memberId','username email  avatar')
+ 
 
-    return workspaces
+
+  fetchAllWorkspaceByMemberId: async function (memberId) {
+    const workspaces = await WorkSpace.find({
+      'members.memberId': memberId
+    }).populate('members.memberId', 'username email  avatar');
+
+    return workspaces;
   }
 };
 

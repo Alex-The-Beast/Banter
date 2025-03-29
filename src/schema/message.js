@@ -19,11 +19,11 @@ const messageSchema = new mongoose.Schema({
   },
   workspaceId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Workspace',
+    ref: 'WorksPace',
     required: [true, 'Workspace Id is required.']
   }
 });
 
-const Message = mongoose.mmmodel('Message', messageSchema);
+const Message = mongoose.model('Message', messageSchema);
 
 export default Message;
