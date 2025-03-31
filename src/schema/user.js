@@ -54,6 +54,6 @@ userSchema.pre('save', function saveUser(next) {
   user.avatar = `https://api.multiavatar.com/${user.username}.png`;
   next();
 });
-const User = mongoose.model('user', userSchema);
+const User = mongoose.model('User', userSchema);
 
 export default User;

@@ -34,7 +34,7 @@ const workspaceRepository = {
 
     return workspace;
   },
-  addMemberToWorkspace: async function (workspaceId, memberId, role) {
+  addMemberToWorkspace: async function (workspaceId, memberId, role) { //ye wala after creating workspace response come to service adn after extracting data from there comes to here .
     const workspace = await WorkSpace.findById(workspaceId);
     if (!workspace) {
       throw new ClientError({
@@ -71,6 +71,7 @@ const workspaceRepository = {
     await workspace.save();
 
     return workspace;
+  },
 
     // const updatedWorkspace = await WorkSpace.findByIdAndUpdate(
     //   workspaceId,
@@ -79,7 +80,7 @@ const workspaceRepository = {
     //   },
     //   { new: true }
     // );
-  },
+ 
   // addChannelToWorkspace: async function (workspaceId, channelName) {
   //   const workspace =
   //     await WorkSpace.findById(workspaceId).populate('channels');
