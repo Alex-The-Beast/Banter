@@ -9,6 +9,14 @@ import crudRepository from './crudRepositories.js';
 // we can make this by creating an object as well
 const workspaceRepository = {
   ...crudRepository(WorkSpace),
+
+  getWorkspaceDetailsById: async function (workspaceId) {
+    const workspace = await WorkSpace.findById(workspaceId)
+      .populate('members.memberId', 'username email avatar')
+      .populate('channels');
+
+    return workspace;
+  },
   getWorkspaceByName: async function (workspaceName) {
     const workspace = await WorkSpace.findOne({
       name: workspaceName
@@ -34,7 +42,8 @@ const workspaceRepository = {
 
     return workspace;
   },
-  addMemberToWorkspace: async function (workspaceId, memberId, role) { //ye wala after creating workspace response come to service adn after extracting data from there comes to here .
+  addMemberToWorkspace: async function (workspaceId, memberId, role) {
+    //ye wala after creating workspace response come to service adn after extracting data from there comes to here .
     const workspace = await WorkSpace.findById(workspaceId);
     if (!workspace) {
       throw new ClientError({
@@ -73,14 +82,14 @@ const workspaceRepository = {
     return workspace;
   },
 
-    // const updatedWorkspace = await WorkSpace.findByIdAndUpdate(
-    //   workspaceId,
-    //   {
-    //     $addToSet: { members: {memberId,role} }
-    //   },
-    //   { new: true }
-    // );
- 
+  // const updatedWorkspace = await WorkSpace.findByIdAndUpdate(
+  //   workspaceId,
+  //   {
+  //     $addToSet: { members: {memberId,role} }
+  //   },
+  //   { new: true }
+  // );
+
   // addChannelToWorkspace: async function (workspaceId, channelName) {
   //   const workspace =
   //     await WorkSpace.findById(workspaceId).populate('channels');
@@ -114,11 +123,9 @@ const workspaceRepository = {
   //   return workspace;
   // },
 
-
   addChannelToWorkspace: async function (workspaceId, channelName) {
     const workspace =
       await WorkSpace.findById(workspaceId).populate('channels');
-      
 
     if (!workspace) {
       throw new ClientError({
@@ -150,9 +157,6 @@ const workspaceRepository = {
 
     return workspace;
   },
-
- 
-
 
   fetchAllWorkspaceByMemberId: async function (memberId) {
     const workspaces = await WorkSpace.find({
