@@ -11,7 +11,20 @@ import ValidationError from '../utils/errors/validationError.js';
 // Workspace Management
 
 // a. Create a workspace
-export const createWorkspaceService = async (workspaceData) => { //isme req.body and owner from client pass hoga
+
+ const isUserAdminOfWorkspace = (workspace, userId) => {
+  return workspace.members.find(
+    (member) => member.memberId.toString() === userId && member.role === 'admin'
+  );
+};
+
+const isUserMemberOfWorkspace = (workspace, userId) => {
+  return workspace.members.find(
+    (member) => member.memberId.toString() === userId
+  );
+}
+export const createWorkspaceService = async (workspaceData) => {
+  //isme req.body and owner from client pass hoga
   try {
     const joinCode = uuidv4().substring(0, 6).toUpperCase();
     const response = await workspaceRepository.create({
@@ -41,9 +54,8 @@ export const createWorkspaceService = async (workspaceData) => { //isme req.body
       throw new ValidationError(
         {
           error: error.errors
-          
-        }, error.message
-       
+        },
+        error.message
       );
     }
 
@@ -92,7 +104,8 @@ export const deletedWorkspaceService = async (workspaceId, userId) => {
       });
     }
     const isAllowed = workspace.members.find(
-      (member) => member.memberId == userId && member.role == 'admin'
+      (member) =>
+        member.memberId.toString() === userId && member.role === 'admin'
     );
     if (isAllowed) {
       await channelRepository.deleteMany(workspace.channels);
@@ -105,11 +118,58 @@ export const deletedWorkspaceService = async (workspaceId, userId) => {
       explanation: 'User is either not a member or admin of a workspace.',
       message: 'You are not allowed to delete this workspace',
       statusCode: StatusCodes.UNAUTHORIZED
-    })
+    });
   } catch (error) {
     console.log(error);
     throw error;
   }
 };
 
+export const getWorkspaceService = async (workspaceId, userId) => {
+  try {
+    const workspace=await workspaceRepository.getById(workspaceId)
+    if(!workspace){
+      throw new ClientError({
+        explanation: 'No workspaces found for the user',
+        message: 'No workspaces found for the user',
+        statusCode: StatusCodes.NOT_FOUND
+      })
+    }
+  const isMember=isUserMemberOfWorkspace(workspace,userId)
+  if(!isMember){
+    throw new ClientError({
+      explanation: 'User is either not a member or admin of a workspace.',
+      message: 'You are not allowed to get the details of this workspace',
+      statusCode: StatusCodes.UNAUTHORIZED
+    })
+  }
+  return workspace
+
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const getWorkspaceByJoinCodeService = async (joinCode) => {};
+
+export const updateWorkspaceService = async (
+  workspaceId,
+  workspaceData,
+  userId
+) => {
+  const response = await workspaceRepository.update(workspaceId, workspaceData);
+  return response;
+};
+
+export const addMemberToWorkspaceService = async (
+  workspaceId,
+  memberId,
+  role
+) => {};
+
+export const addChannelToWorkspaceService = async (
+  workspaceId,
+  channelName
+) => {};
 // Fetch all workspaces a user belongs to

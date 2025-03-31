@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { createWorkspaceController ,deletedWorkspaceController,getWorkspaceController} from '../../controllers/workspaceController.js';
+import { createWorkspaceController ,deletedWorkspaceController,getAllWorkspaceController,getWorkspaceController} from '../../controllers/workspaceController.js';
 import { isAuthenticated } from '../../middleware/authMiddleware.js';
 import { createWorkspaceSchema } from '../../validators/workspaceSchema.js';
 import { validate } from '../../validators/zodValidator.js';
@@ -16,5 +16,7 @@ router.post(
 router.get('/', isAuthenticated, getWorkspaceController);
 
 router.delete('/:workspaceId', isAuthenticated, deletedWorkspaceController);
+
+router.get('/:workspaceId', isAuthenticated, getAllWorkspaceController);
 
 export default router;
