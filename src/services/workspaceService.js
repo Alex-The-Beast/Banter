@@ -3,9 +3,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 import channelRepository from '../repositories/channelRepositories.js';
 import workspaceRepository from '../repositories/workspaceRepositories.js';
+import User from '../schema/user.js';
 import ClientError from '../utils/errors/clientError.js';
 import ValidationError from '../utils/errors/validationError.js';
-import User from '../schema/user.js';
 
 // 1. Core Features to Implement in the Service Layer
 
@@ -240,10 +240,10 @@ export const addMemberToWorkspaceService = async (
       });
     }
     const isMember = await workspaceRepository.isMember(workspaceId, memberId);
-    if (!isMember) {
+    if (isMember) {
       throw new ClientError({
-        explanation: 'User is either not a member or admin of a workspace.',
-        message: 'You are not allowed to add member to this workspace',
+        explanation: 'User is already a member of workspace.',
+        message: 'User is already a member of workspace',
         statusCode: StatusCodes.UNAUTHORIZED
       });
     }
@@ -313,4 +313,4 @@ export const addChannelToWorkspaceService = async (
     throw error;
   }
 };
-// Fetch all workspaces a user belongs to
+
