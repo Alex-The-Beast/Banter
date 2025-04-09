@@ -13,16 +13,23 @@ import ValidationError from '../utils/errors/validationError.js';
 
 // a. Create a workspace
 
-const isUserAdminOfWorkspace = (workspace, userId) => {
-  return workspace.members.find(
-    (member) => member.memberId.toString() === userId && member.role === 'admin'
-  );
-};
 
-const isUserMemberOfWorkspace = (workspace, userId) => {
-  return workspace.members.find(
-    (member) => member.memberId.toString() === userId
+
+const isUserAdminOfWorkspace = (workspace, userId) => {
+  console.log(workspace.members, userId);
+  const response = workspace.members.find(
+    (member) =>
+      (member.memberId.toString() === userId ||
+        member.memberId._id.toString() === userId) &&
+      member.role === 'admin'
   );
+  return response;
+};
+export const isUserMemberOfWorkspace = (workspace, userId) => {
+  return workspace.members.find((member) => {
+    console.log('member id ', member.memberId.toString());
+    return member.memberId._id.toString() === userId;
+  });
 };
 
 const isChannelAlreadyPartOfWorkspace = (workspace, channelName) => {
@@ -220,7 +227,7 @@ export const updateWorkspaceService = async (
 export const addMemberToWorkspaceService = async (
   workspaceId,
   memberId,
-  role
+  role,userId
 ) => {
   try {
     const workspace = await workspaceRepository.getById(workspaceId);
@@ -239,7 +246,7 @@ export const addMemberToWorkspaceService = async (
         statusCode: StatusCodes.NOT_FOUND
       });
     }
-    const isMember = await workspaceRepository.isMember(workspaceId, memberId);
+    const isMember = await isUserMemberOfWorkspace(workspace, memberId);
     if (isMember) {
       throw new ClientError({
         explanation: 'User is already a member of workspace.',
@@ -247,7 +254,7 @@ export const addMemberToWorkspaceService = async (
         statusCode: StatusCodes.UNAUTHORIZED
       });
     }
-    const isAdmin = await workspaceRepository.isAdmin(workspaceId, memberId);
+    const isAdmin = await isUserAdminOfWorkspace(workspace, userId);
     if (!isAdmin) {
       throw new ClientError({
         explanation: 'User is either not a member or admin of a workspace.',
@@ -266,6 +273,8 @@ export const addMemberToWorkspaceService = async (
     throw error;
   }
 };
+
+
 
 export const addChannelToWorkspaceService = async (
   workspaceId,
@@ -303,6 +312,7 @@ export const addChannelToWorkspaceService = async (
       });
       
     }
+    console.log('addChannelToworkspaceService',workspaceId,channelName);
     const channelAdded = await workspaceRepository.addChannelToWorkspace(
       workspaceId,
       channelName

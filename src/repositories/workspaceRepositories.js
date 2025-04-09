@@ -43,7 +43,7 @@ const workspaceRepository = {
     return workspace;
   },
   addMemberToWorkspace: async function (workspaceId, memberId, role) {
-    //ye wala after creating workspace response come to service adn after extracting data from there comes to here .
+    //ye wala after creating workspace response come to service and  after extracting data from there comes to here .
     const workspace = await WorkSpace.findById(workspaceId);
     if (!workspace) {
       throw new ClientError({
