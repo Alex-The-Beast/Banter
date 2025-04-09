@@ -1,5 +1,6 @@
 import express from 'express';
 import { StatusCodes } from 'http-status-codes';
+import mailer from './config/mailConfig.js'
 
 import connectDB from './config/dbConfig.js';
 import { PORT } from './config/serverConfig.js';
@@ -17,7 +18,16 @@ app.get('/ping', (req, res) => {
   return res.status(StatusCodes.OK).json({ message: 'pong' });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT,async () => {
   console.log(`Server is running on port :${PORT}`);
   connectDB();
+  const mailResponse = await mailer.sendMail({
+    from: 'gk064577@gmail.com',
+    to:'abhishekchauhan244235@gmail.com',
+    subject:'welcome mail',
+    text:'sala gandu'
+    
+  })
+
+  console.log(mailResponse);
 });
