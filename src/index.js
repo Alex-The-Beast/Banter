@@ -25,7 +25,7 @@ app.listen(PORT,async () => {
     from: 'gk064577@gmail.com',
     to:'abhishekchauhan244235@gmail.com',
     subject:'welcome mail',
-    text:'sala gandu'
+    text:'How are you man'
     
   })
 
