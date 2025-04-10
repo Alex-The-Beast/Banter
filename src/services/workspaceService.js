@@ -6,6 +6,9 @@ import workspaceRepository from '../repositories/workspaceRepositories.js';
 import User from '../schema/user.js';
 import ClientError from '../utils/errors/clientError.js';
 import ValidationError from '../utils/errors/validationError.js';
+import { addEmailToMailQueue } from '../producers/mailQueueProducer.js';
+import { workspaceJoinMail } from '../utils/common/mailObject.js';
+
 
 // 1. Core Features to Implement in the Service Layer
 
@@ -267,6 +270,7 @@ export const addMemberToWorkspaceService = async (
       memberId,
       role
     );
+    addEmailToMailQueue({...workspaceJoinMail(workspace),to:isValidUser.email})
     return response;
   } catch (error) {
     console.log('Add member to workspace service error', error);

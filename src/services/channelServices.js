@@ -1,5 +1,6 @@
-import channelRepository from '../repositories/channelRepositories.js';
 import { StatusCodes } from 'http-status-codes';
+
+import channelRepository from '../repositories/channelRepositories.js';
 import ClientError from '../utils/errors/clientError.js';
 import { isUserMemberOfWorkspace } from './workspaceService.js';
 

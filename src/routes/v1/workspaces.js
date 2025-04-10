@@ -12,10 +12,9 @@ import {
 } from '../../controllers/workspaceController.js';
 import { isAuthenticated } from '../../middleware/authMiddleware.js';
 import {
+  addChannelToWorkspaceSchema,
   addMemberToWorkspaceSchema,
-  createWorkspaceSchema,
-  addChannelToWorkspaceSchema
-} from '../../validators/workspaceSchema.js';
+  createWorkspaceSchema} from '../../validators/workspaceSchema.js';
 import { validate } from '../../validators/zodValidator.js';
 
 const router = express.Router();
