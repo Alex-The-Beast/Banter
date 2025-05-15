@@ -10,12 +10,6 @@ import ClientError from '../utils/errors/clientError.js';
 import ValidationError from '../utils/errors/validationError.js';
 
 
-// 1. Core Features to Implement in the Service Layer
-
-// Workspace Management
-
-// a. Create a workspace
-
 
 
 const isUserAdminOfWorkspace = (workspace, userId) => {
