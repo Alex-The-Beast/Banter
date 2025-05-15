@@ -1,13 +1,13 @@
 import { StatusCodes } from 'http-status-codes';
 import { v4 as uuidv4 } from 'uuid';
 
+import { addEmailToMailQueue } from '../producers/mailQueueProducer.js';
 import channelRepository from '../repositories/channelRepositories.js';
 import workspaceRepository from '../repositories/workspaceRepositories.js';
 import User from '../schema/user.js';
+import { workspaceJoinMail } from '../utils/common/mailObject.js';
 import ClientError from '../utils/errors/clientError.js';
 import ValidationError from '../utils/errors/validationError.js';
-import { addEmailToMailQueue } from '../producers/mailQueueProducer.js';
-import { workspaceJoinMail } from '../utils/common/mailObject.js';
 
 
 // 1. Core Features to Implement in the Service Layer
