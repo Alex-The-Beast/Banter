@@ -16,7 +16,8 @@ export const getMessages = async (req, res) => {
         // workspaceId: req.query.workspaceId
      },
      req.query.page || 1,
-     req.query.limit || 20
+     req.query.limit || 20,
+     req.user
     );
     return res
       .status(StatusCodes.OK)
