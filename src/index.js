@@ -34,10 +34,26 @@ app.get('/ping', (req, res) => {
 
 io.on('connection', (socket) => {
   console.log('a user connected',socket.id);
+
+  socket.on('messageFromClient',(data)=>{
+  console.log("Message from client",data);
+
+  io.emit('new message',data.toUpperCase())
+})
+
+
+  // setInterval(()=>{
+  //   socket.emit('message', 'This is message from the server.');
+  // },3000)
+
 });
+
+
 
 server.listen(PORT, () => {
   console.log(`Server is running on port :${PORT}`);
   connectDB();
 
 });
+
+// completed till 2:12:08 in video now we will use socket.emit and so on.
