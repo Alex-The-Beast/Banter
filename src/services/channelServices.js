@@ -1,6 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 
 import channelRepository from '../repositories/channelRepositories.js';
+import messageRepository from '../repositories/messageRepositories.js';
 import ClientError from '../utils/errors/clientError.js';
 import { isUserMemberOfWorkspace } from './workspaceService.js';
 
@@ -10,8 +11,7 @@ export const getChannelByIdService = async (channelId, userId) => {
     const channel =
       await channelRepository.getChannelByWorkspaceDetails(channelId);
 
-
-    if (!channel || !channel.workspaceId ) {
+    if (!channel || !channel.workspaceId) {
       throw new ClientError({
         explanation: 'No channel found with given id',
         message: 'No channel found',
@@ -25,14 +25,33 @@ export const getChannelByIdService = async (channelId, userId) => {
     );
     if (!isUserPartOfWorkspace) {
       throw new ClientError({
-        message: 'User is not a member of workspace and hence cannot access the channel.',
+        message:
+          'User is not a member of workspace and hence cannot access the channel.',
         explanation: 'User is not a member of the workspace',
         statusCode: StatusCodes.UNAUTHORIZED
       });
     }
-    return channel;
+
+    const messages = await messageRepository.getPaginatedMessaged(
+      { channelId },
+      1,
+      20
+    );
+
+    console.log('channel in service', channel);
+  
+
+      return {
+      messages,
+      _id: channel._id,
+      name: channel.name,
+      createdAt: channel.createdAt,
+      updatedAt: channel.updatedAt,
+      workspaceId: channel.workspaceId
+    };
   } catch (error) {
     console.log(Error, 'Error from get channel by id service');
     throw error;
   }
 };
+

@@ -10,9 +10,10 @@ import {
 export const getChannelByIdController = async (req, res) => {
   try {
     const response = await getChannelByIdService(
-      req.params.channelId,req.user
-     
+      req.params.channelId,
+      req.user
     );
+    console.log("hello",response);
     return res
       .status(StatusCodes.OK)
       .json(successResponse(response, 'Channel Fetched Successfully'));
