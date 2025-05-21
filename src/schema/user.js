@@ -51,7 +51,7 @@ userSchema.pre('save', function saveUser(next) {
   const SALT = bcrypt.genSaltSync(9);
   const hashedPassword = bcrypt.hashSync(user.password, SALT);
   user.password = hashedPassword;
-  user.avatar = `https://api.multiavatar.com/${user.username}.png`;
+   user.avatar = `https://robohash.org/${user.username}`;
   next();
 });
 const User = mongoose.model('User', userSchema);
