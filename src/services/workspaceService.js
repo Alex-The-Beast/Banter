@@ -89,12 +89,15 @@ export const getAllWorkspacesUserIsMemberOfService = async (userId) => {
       await workspaceRepository.fetchAllWorkspaceByMemberId(userId);
     // console.log("Workspaces fetched:", response); response give the array of objects
 
+ 
+
     if (response.length === 0) {
-      throw new ClientError({
-        explanation: 'No workspaces found for the user',
-        message: 'No workspaces found for the user',
-        statusCode: StatusCodes.NOT_FOUND
-      });
+      // throw new ClientError({
+      //   explanation: 'No workspaces found for the user',
+      //   message: 'No workspaces found for the user1',
+      //   statusCode: StatusCodes.NOT_FOUND
+      // });
+      return []
     }
     return response;
   } catch (error) {
