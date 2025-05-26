@@ -9,9 +9,6 @@ import { workspaceJoinMail } from '../utils/common/mailObject.js';
 import ClientError from '../utils/errors/clientError.js';
 import ValidationError from '../utils/errors/validationError.js';
 
-
-
-
 const isUserAdminOfWorkspace = (workspace, userId) => {
   console.log(workspace.members, userId);
   const response = workspace.members.find(
@@ -89,15 +86,13 @@ export const getAllWorkspacesUserIsMemberOfService = async (userId) => {
       await workspaceRepository.fetchAllWorkspaceByMemberId(userId);
     // console.log("Workspaces fetched:", response); response give the array of objects
 
- 
-
     if (response.length === 0) {
       // throw new ClientError({
       //   explanation: 'No workspaces found for the user',
       //   message: 'No workspaces found for the user1',
       //   statusCode: StatusCodes.NOT_FOUND
       // });
-      return []
+      return [];
     }
     return response;
   } catch (error) {
@@ -141,7 +136,8 @@ export const deletedWorkspaceService = async (workspaceId, userId) => {
 
 export const getWorkspaceService = async (workspaceId, userId) => {
   try {
-    const workspace = await workspaceRepository.getWorkspaceDetailsById(workspaceId);
+    const workspace =
+      await workspaceRepository.getWorkspaceDetailsById(workspaceId);
     if (!workspace) {
       throw new ClientError({
         explanation: 'No workspaces found for the user',
@@ -224,10 +220,26 @@ export const updateWorkspaceService = async (
   }
 };
 
+export const resetWorkspaceJoinCodeService = async (workspaceId, userId) => {
+  try {
+    const newJoinCode = uuidv4().substring(0, 6).toUpperCase();
+
+    const updatedWorkspace = await updateWorkspaceService(
+      workspaceId,
+      { joinCode: newJoinCode },
+      userId
+    );
+    return updatedWorkspace;
+  } catch (error) {
+    console.log('reset workspace join code service error', error);
+    throw error;
+  }
+};
 export const addMemberToWorkspaceService = async (
   workspaceId,
   memberId,
-  role,userId
+  role,
+  userId
 ) => {
   try {
     const workspace = await workspaceRepository.getById(workspaceId);
@@ -267,15 +279,16 @@ export const addMemberToWorkspaceService = async (
       memberId,
       role
     );
-    addEmailToMailQueue({...workspaceJoinMail(workspace),to:isValidUser.email})
+    addEmailToMailQueue({
+      ...workspaceJoinMail(workspace),
+      to: isValidUser.email
+    });
     return response;
   } catch (error) {
     console.log('Add member to workspace service error', error);
     throw error;
   }
 };
-
-
 
 export const addChannelToWorkspaceService = async (
   workspaceId,
@@ -305,15 +318,14 @@ export const addChannelToWorkspaceService = async (
       workspace,
       channelName
     );
-    if(channelExist){
+    if (channelExist) {
       throw new ClientError({
         explanation: 'Invalid data sent from client',
         message: 'Channel is already part of workspace',
         statusCode: StatusCodes.FORBIDDEN
       });
-      
     }
-    console.log('addChannelToworkspaceService',workspaceId,channelName);
+    console.log('addChannelToworkspaceService', workspaceId, channelName);
     const channelAdded = await workspaceRepository.addChannelToWorkspace(
       workspaceId,
       channelName
@@ -324,4 +336,3 @@ export const addChannelToWorkspaceService = async (
     throw error;
   }
 };
-

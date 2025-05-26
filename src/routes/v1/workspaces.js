@@ -8,6 +8,7 @@ import {
   getAllWorkspaceController,
   getWorkspaceByJoinCodeController,
   getWorkspaceController,
+  resetJoinCodeController,
   updateWrokspaceController
 } from '../../controllers/workspaceController.js';
 import { isAuthenticated } from '../../middleware/authMiddleware.js';
@@ -51,6 +52,12 @@ router.put(
   isAuthenticated,
   validate(addChannelToWorkspaceSchema),
   addChannelToWorkspaceController
+);
+
+router.put(
+  '/:workspaceId/joincode/:reset',
+  isAuthenticated,
+  resetJoinCodeController
 );
 
 export default router;
