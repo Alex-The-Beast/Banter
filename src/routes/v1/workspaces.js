@@ -8,6 +8,7 @@ import {
   getAllWorkspaceController,
   getWorkspaceByJoinCodeController,
   getWorkspaceController,
+  joinWorkspaceController,
   resetJoinCodeController,
   updateWrokspaceController
 } from '../../controllers/workspaceController.js';
@@ -15,7 +16,8 @@ import { isAuthenticated } from '../../middleware/authMiddleware.js';
 import {
   addChannelToWorkspaceSchema,
   addMemberToWorkspaceSchema,
-  createWorkspaceSchema} from '../../validators/workspaceSchema.js';
+  createWorkspaceSchema
+} from '../../validators/workspaceSchema.js';
 import { validate } from '../../validators/zodValidator.js';
 
 const router = express.Router();
@@ -38,6 +40,7 @@ router.get(
   getWorkspaceByJoinCodeController
 );
 
+router.put('/:workspaceId/join', isAuthenticated, joinWorkspaceController);
 router.put('/:workspaceId', isAuthenticated, updateWrokspaceController);
 
 router.put(
@@ -55,7 +58,7 @@ router.put(
 );
 
 router.put(
-  '/:workspaceId/joincode/:reset',
+  '/:workspaceId/joincode/reset',
   isAuthenticated,
   resetJoinCodeController
 );
