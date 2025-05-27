@@ -1,5 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 
+import { verifyTokenService } from '../services/userServices.js';
 import {
   addChannelToWorkspaceService,
   addMemberToWorkspaceService,
@@ -227,3 +228,20 @@ export const joinWorkspaceController=async(req,res)=>{
   }
 
 }
+
+export const verifyEmailController = async (req, res) => {
+  try {
+    const response = await verifyTokenService(req.params.token);
+    return res
+      .status(StatusCodes.OK)
+      .json(successResponse(response, 'Email Verified Successfully'));
+  } catch (error) {
+    console.log('Verify email controller error', error);
+    if (error.statusCode) {
+      return res.status(error.statusCode).json(customErrorResponse(error));
+    }
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json(internalErrorResponse(error));
+  }
+};
