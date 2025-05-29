@@ -209,7 +209,7 @@ export const joinWorkspaceController=async(req,res)=>{
   try{
     const response=await joinWorkspaceService(
       req.params.workspaceId,
-      {joinCode:req.body.joinCode},
+      req.body.joinCode,
       req.user
     );
     // console.log("joincode workspace",joinCode,workspaceId)

@@ -21,7 +21,11 @@ app.use(express.urlencoded({ extended: true }));
 
 
 const server = createServer(app);
-const io=new Server(server)
+const io=new Server(server,{
+  cors:{
+    origin:"*"
+  }
+})
 
 
 
@@ -38,7 +42,7 @@ app.get('/ping', (req, res) => {
 
 
 io.on('connection', (socket) => {
-//   console.log('a user connected',socket.id);
+  console.log('a user connected',socket.id);
 
 //   socket.on('messageFromClient',(data)=>{
 //   console.log("Message from client",data);
