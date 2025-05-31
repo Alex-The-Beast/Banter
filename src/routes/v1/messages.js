@@ -6,7 +6,7 @@ import { isAuthenticated } from '../../middleware/authMiddleware.js';
 const router = express.Router();
 
 router.get(
-  '/messages/:channelId',
+  '/:channelId',
   isAuthenticated,
  getMessages
 );

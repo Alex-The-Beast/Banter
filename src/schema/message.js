@@ -22,7 +22,7 @@ const messageSchema = new mongoose.Schema({
     ref: 'WorkSpace',
     required: [true, 'Workspace Id is required.']
   }
-});
+}, { timestamps: true });
 
 const Message = mongoose.model('Message', messageSchema);
 
